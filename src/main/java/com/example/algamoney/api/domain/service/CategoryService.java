@@ -1,6 +1,7 @@
 package com.example.algamoney.api.domain.service;
 
 import com.example.algamoney.api.domain.exception.BusinessException;
+import com.example.algamoney.api.domain.exception.EntityNotFoundException;
 import com.example.algamoney.api.domain.model.Category;
 import com.example.algamoney.api.domain.repository.CategoryRepository;
 import lombok.AllArgsConstructor;

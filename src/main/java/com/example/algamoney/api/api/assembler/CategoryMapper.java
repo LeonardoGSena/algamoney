@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Component
 public class CategoryMapper {
@@ -19,5 +22,11 @@ public class CategoryMapper {
 
     public Category toEntity(CategoryInput categoryInput) {
         return modelMapper.map(categoryInput, Category.class);
+    }
+
+    public List<CategoryModel> toCollectionModel(List<Category> allCategories) {
+        return allCategories.stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
     }
 }

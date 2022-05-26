@@ -10,12 +10,7 @@ import com.example.algamoney.api.domain.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.algamoney.api.domain.model.Category;
 import com.example.algamoney.api.domain.repository.CategoryRepository;
@@ -31,10 +26,19 @@ public class CategoryController {
 
 	private CategoryService categoryService;
 	private CategoryMapper categoryMapper;
+	private CategoryRepository categoryRepository;
 
 	@GetMapping
-	public List<Category> getCategories() {
-		return categoryService.getAllCategories();
+	public List<CategoryModel> getCategories() {
+		List<Category> allCategories = categoryService.getAllCategories();
+		return categoryMapper.toCollectionModel(allCategories);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<CategoryModel> getCategoryById(@PathVariable Long id) {
+		return categoryRepository.findById(id)
+				.map(category -> ResponseEntity.ok(categoryMapper.toModel(category)))
+				.orElse(ResponseEntity.notFound().build());
 	}
 	
 	@PostMapping
