@@ -7,7 +7,6 @@ import com.example.algamoney.api.api.assembler.CategoryMapper;
 import com.example.algamoney.api.api.model.CategoryModel;
 import com.example.algamoney.api.api.model.input.CategoryInput;
 import com.example.algamoney.api.domain.service.CategoryService;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-@AllArgsConstructor
+
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -28,10 +27,16 @@ public class CategoryController {
 	private CategoryMapper categoryMapper;
 	private CategoryRepository categoryRepository;
 
+	public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper, CategoryRepository categoryRepository) {
+		this.categoryService = categoryService;
+		this.categoryMapper = categoryMapper;
+		this.categoryRepository = categoryRepository;
+	}
+
 	@GetMapping
 	public List<CategoryModel> getCategories() {
-		List<Category> allCategories = categoryService.getAllCategories();
-		return categoryMapper.toCollectionModel(allCategories);
+		List<Category> categoryList = categoryService.getAllCategories();
+		return categoryMapper.toCollectionModel(categoryList);
 	}
 
 	@GetMapping("/{id}")
@@ -46,9 +51,11 @@ public class CategoryController {
 	public CategoryModel addNewCategory(@Valid @RequestBody CategoryInput categoryInput, HttpServletResponse response) {
 		Category category = categoryMapper.toEntity(categoryInput);
 		Category newCategory = categoryService.addNewCategory(category);
+
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
 				.buildAndExpand(newCategory.getId()).toUri();
 		response.setHeader("Location", uri.toASCIIString());
+
 		return categoryMapper.toModel(newCategory);
 	}
 }

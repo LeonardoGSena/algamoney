@@ -1,20 +1,22 @@
 package com.example.algamoney.api.domain.service;
 
 import com.example.algamoney.api.domain.exception.BusinessException;
-import com.example.algamoney.api.domain.exception.EntityNotFoundException;
 import com.example.algamoney.api.domain.model.Category;
 import com.example.algamoney.api.domain.repository.CategoryRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@AllArgsConstructor
+
 @Service
 public class CategoryService {
 
     private CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();

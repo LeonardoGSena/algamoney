@@ -10,11 +10,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Table(name = "categoria")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
+@Entity
 public class Category {
 
 	@EqualsAndHashCode.Include
