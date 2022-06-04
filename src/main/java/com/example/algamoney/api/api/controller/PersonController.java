@@ -6,7 +6,9 @@ import com.example.algamoney.api.api.model.input.PersonInput;
 import com.example.algamoney.api.domain.model.Person;
 import com.example.algamoney.api.domain.repository.PersonRepository;
 import com.example.algamoney.api.domain.service.PersonService;
+import com.example.algamoney.api.event.EventResource;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,7 +28,7 @@ public class PersonController {
     private PersonService personService;
     private PersonMapper personMapper;
     private PersonRepository personRepository;
-
+    private ApplicationEventPublisher publisher;
 
 
     @GetMapping
@@ -48,9 +50,7 @@ public class PersonController {
         Person person = personMapper.toEntity(personInput);
         Person newPerson = personService.addNewPerson(person);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(newPerson.getId()).toUri();
-        response.setHeader("Location", uri.toASCIIString());
+        publisher.publishEvent(new EventResource(this, response, person.getId()));
 
         return personMapper.toModel(newPerson);
     }
