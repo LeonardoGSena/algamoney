@@ -7,6 +7,8 @@ import com.example.algamoney.api.api.assembler.CategoryMapper;
 import com.example.algamoney.api.api.model.CategoryModel;
 import com.example.algamoney.api.api.model.input.CategoryInput;
 import com.example.algamoney.api.domain.service.CategoryService;
+import com.example.algamoney.api.event.EventResource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ public class CategoryController {
 	private CategoryService categoryService;
 	private CategoryMapper categoryMapper;
 	private CategoryRepository categoryRepository;
+	private ApplicationEventPublisher publisher;
 
 	public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper, CategoryRepository categoryRepository) {
 		this.categoryService = categoryService;
@@ -52,9 +55,7 @@ public class CategoryController {
 		Category category = categoryMapper.toEntity(categoryInput);
 		Category newCategory = categoryService.addNewCategory(category);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-				.buildAndExpand(newCategory.getId()).toUri();
-		response.setHeader("Location", uri.toASCIIString());
+		publisher.publishEvent(new EventResource(this, response, category.getId()));
 
 		return categoryMapper.toModel(newCategory);
 	}
